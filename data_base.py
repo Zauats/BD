@@ -90,6 +90,8 @@ class Table():
 		else:
 			self.cursor[0] += x
 			self.cursor[1] += y
+
+
 		
 
 	def input_element(self, x, y, new_data): 
@@ -110,6 +112,7 @@ class Table():
 			self.table[y][x] = new_data		
 		else:
 			self.table[y][x] = new_data
+		
 
 	def delete_element(self, x, y):
 		"""1. Проверка на то, что бросается ValueError при неккоректных координатах
@@ -141,8 +144,12 @@ class Table():
 		new_table.extend(lsort(self.table[1:-1], self.cursor[0]))
 		new_table.append(self.table[-1])
 		self.table = new_table
+		cursor = self.cursor[1]
+		cursorMax = 10
 		for i in range(len(self.table)):
-			self.table[i][-1] = str(i)
+			if cursorMax > 0:
+				self.table[i][-1] = str(i)
+				# cursor_ma
 
 		
 
@@ -169,6 +176,17 @@ class Table():
 		first_i = 0
 		choise = False
 		self.search_element()
+
+		id1 = 1;
+		id2 = len(self.id_list)
+		if self.cursor[1] > 5:
+			id1 = self.cursor[1] - 5
+		if 5 < len(self.id_list):
+			id2 = self.cursor[1] + 5
+			if self.cursor[1] <= 5:
+				id2 += 5 - self.cursor[1]
+
+
 		id_list = self.id_list
 		for y, max_y,  in zip(table, max_y_list):
 			if y[-1] in id_list:
@@ -181,7 +199,7 @@ class Table():
 					if first_i == 0:
 						if i == 0: simbol = '╔'
 						else: simbol = '╦'
-					else:
+					else:			
 						if i == 0: simbol = '╠'
 						else: simbol = '╬'
 					string += simbol + open_color + '═' * (max_x + 2) + close_color
@@ -291,14 +309,17 @@ class Interface():
 					table_num = 0
 					with open('C:\\Users\\пользователь\\DataBase\\file.txt', encoding="UTF-8") as f:
 						table = list()
-				# 		for string in f:
-				# 			if string == '\n':
-				# 				self.tables[self.tables_list[table_num]].table = table
-				# 				print(self.tables[self.tables_list[table_num]].table)
-				# 				table.clear()
-				# 				table_num += 1
-				# 			else:
-				# 				table.append(string.split(',')[:-1])
+						for string  in f:
+							string = string.split(',')[:-1]
+							table.append(string)
+							if (len(string) == 0):
+								table = table[:-2]
+								table.append(['' for i in (len(table[0])) * ' '])
+								self.tables[self.tables_list[table_num]].table = table
+								table = list()
+								table_num += 1
+
+
 
 
 
@@ -447,6 +468,7 @@ class Interface():
 				field = choise_table.table[int(choise_table.id_list[choise_table.cursor[1]])][choise_table.cursor[0]]
 				field += key
 				choise_table.input_element(choise_table.cursor[0], int(choise_table.id_list[choise_table.cursor[1]]), field)
+				
 
 if __name__ == "__main__":
 	work_table = Table('Практическая работа', 'Студент', 'Вариант', 'Уровень задания', 'Дата сдачи', 'Оценка', name='таблица выполнения работ')
