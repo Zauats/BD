@@ -80,6 +80,8 @@ class Table():
 		self.search_string = ''
 		self.id_list = ['0', '1']
 		self.cursor = [0, 0]
+		self.id1 = 0
+		self.id2 = 10
 
 	def move_cursor(self, x, y):
 		self.search_element()
@@ -130,26 +132,20 @@ class Table():
 
 	def search_element(self):
 		id_list = ['0']
-
 		for i in range(len(self.table) - 1):
 			if self.search_string in self.table[i + 1][self.search_column]:
 				id_list.append(self.table[i + 1][-1])
-
 		if str(len(self.table) - 1) not in id_list:
 			id_list.append(str(len(self.table) - 1))
-		self.id_list = id_list
+		self.id_list = id_list[self.id1:self.id2]
 
 	def sort_elements(self):
 		new_table = [self.table[0]]
 		new_table.extend(lsort(self.table[1:-1], self.cursor[0]))
 		new_table.append(self.table[-1])
 		self.table = new_table
-		cursor = self.cursor[1]
-		cursorMax = 10
 		for i in range(len(self.table)):
-			if cursorMax > 0:
-				self.table[i][-1] = str(i)
-				# cursor_ma
+			self.table[i][-1] = str(i)
 
 		
 
@@ -300,7 +296,7 @@ class Interface():
 						else:
 							pass
 					if key == chr(27):
-						raise TypeError('Вы ебоклак. Esc на этом этапе делает выход из бд с помощью вызова ошибки')
+						raise TypeError('Esc на этом этапе делает выход из бд с помощью вызова ошибки')
 
 				if choise_table.cursor[1] == 0:
 					self.cursor = 0
@@ -360,6 +356,14 @@ class Interface():
 			elif ord(key) == 80:
 				choise_table.move_cursor(0, 1)
 				# print('вы нажали нижнюю стрелочку')
+			elif ord(key) == 141:
+				choise_table.id1 -= 1
+				choise_table.id2 -= 1
+				# print('вы нажали ctrl + верхнюю стрелочку')
+			elif ord(key) == 145:
+				choise_table.id1 += 1	
+				choise_table.id2 += 1
+				# print('вы нажали ctrl + 	нижнюю стрелочку')
 			else:
 				# print('Произошла хуйня')
 				pass
@@ -374,7 +378,7 @@ class Interface():
 				choise_key = ''
 				while choise_key != chr(13):
 					clear()
-					print('выберете какую-нибудь хуету: ')
+					print('выберете какой-нибудь пункт: ')
 					print(table.print_table())
 					choise_key = msvcrt.getwch()
 					if choise_key == u'\u00E0':
@@ -404,7 +408,7 @@ class Interface():
 				choise_key = ''
 				while choise_key != chr(13):
 					clear()
-					print('выберете какую-нибудь хуету: ')
+					print('выберете како1-нибудь пункт: ')
 					print(table.print_table())
 					choise_key = msvcrt.getwch()
 					if choise_key == u'\u00E0':
