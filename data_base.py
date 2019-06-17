@@ -255,17 +255,30 @@ class Interface():
 		self.help_table.input_element(0, 3, 'ctrl + fномер')
 		self.help_table.input_element(0, 4, 'esc')
 		self.help_table.input_element(0, 5, 'del')
+		self.help_table.input_element(0, 6, 'Enter')
 		self.help_table.input_element(1, 1, 'помощь')
 		self.help_table.input_element(1, 2, 'сохранить таблицу')
 		self.help_table.input_element(1, 3, 'переход между таблицами')
-		self.help_table.input_element(1, 4, 'выход')
+		self.help_table.input_element(1, 4, 'назад или выход')
 		self.help_table.input_element(1, 5, 'удалить информацию в ячейке')
+		self.help_table.input_element(1, 5, 'Выбор элемента')
 		
 		self.tables = kwargs
 		self.tables['help'] = self.help_table
 		self.tables['menu'] = self.menu
 		self.tables_list = list(self.tables.keys())
 		self.cursor = 4
+
+
+	def run(self):
+		check = True
+		while check:
+			check = self.event_handler()
+			clear()
+
+			print(self.tables[self.tables_list[self.cursor]].print_table())
+		clear()
+		print("Все")
 
 
 	def event_handler(self):
@@ -276,7 +289,7 @@ class Interface():
 				choise_key = ''
 				while choise_key != chr(13):
 					clear()
-					print('выберете ебучий пункт: ')
+					print('выберете пункт: ')
 					print(choise_table.print_table())
 					choise_key = msvcrt.getwch()
 					if choise_key == u'\u00E0':
@@ -296,7 +309,9 @@ class Interface():
 						else:
 							pass
 					if key == chr(27):
-						raise TypeError('Esc на этом этапе делает выход из бд с помощью вызова ошибки')
+						return False
+						# raise TypeError()
+
 
 				if choise_table.cursor[1] == 0:
 					self.cursor = 0
@@ -309,8 +324,7 @@ class Interface():
 							string = string.split(',')[:-1]
 							table.append(string)
 							if (len(string) == 0):
-								table = table[:-2]
-								table.append(['' for i in (len(table[0])) * ' '])
+								table = table[:-1]
 								self.tables[self.tables_list[table_num]].table = table
 								table = list()
 								table_num += 1
@@ -357,12 +371,15 @@ class Interface():
 				choise_table.move_cursor(0, 1)
 				# print('вы нажали нижнюю стрелочку')
 			elif ord(key) == 141:
-				choise_table.id1 -= 1
-				choise_table.id2 -= 1
+				if (choise_table.id1 > 0):
+					choise_table.id1 -= 1
+					choise_table.id2 -= 1
+
 				# print('вы нажали ctrl + верхнюю стрелочку')
 			elif ord(key) == 145:
-				choise_table.id1 += 1	
-				choise_table.id2 += 1
+				if (choise_table.id2 < len(choise_table.table) + 1):
+					choise_table.id1 += 1	
+					choise_table.id2 += 1
 				# print('вы нажали ctrl + 	нижнюю стрелочку')
 			else:
 				# print('Произошла хуйня')
@@ -397,7 +414,7 @@ class Interface():
 							# print('вы нажали нижнюю стрелочку')
 						else:
 							pass
-							# print('Произошла хуйня')
+							# print('Произошло нечто')
 				ful_name = table.table[int(table.id_list[table.cursor[1]])][0]
 				choise_table.input_element(choise_table.cursor[0], int(choise_table.id_list[choise_table.cursor[1]]), ful_name)
 
@@ -408,7 +425,7 @@ class Interface():
 				choise_key = ''
 				while choise_key != chr(13):
 					clear()
-					print('выберете како1-нибудь пункт: ')
+					print('выберете какой-нибудь пункт: ')
 					print(table.print_table())
 					choise_key = msvcrt.getwch()
 					if choise_key == u'\u00E0':
@@ -427,7 +444,7 @@ class Interface():
 							# print('вы нажали нижнюю стрелочку')
 						else:
 							pass
-							# print('Произошла хуйня')
+							# print('Произошло нечто')
 				ful_name = table.table[int(table.id_list[table.cursor[1]])][0]
 				choise_table.input_element(choise_table.cursor[0], int(choise_table.id_list[choise_table.cursor[1]]), ful_name)
 					
@@ -472,6 +489,7 @@ class Interface():
 				field = choise_table.table[int(choise_table.id_list[choise_table.cursor[1]])][choise_table.cursor[0]]
 				field += key
 				choise_table.input_element(choise_table.cursor[0], int(choise_table.id_list[choise_table.cursor[1]]), field)
+		return True
 				
 
 if __name__ == "__main__":
@@ -480,12 +498,4 @@ if __name__ == "__main__":
 	student_table = Table('ФИО', 'Оцека', name='таблица студентов') 
 	
 	interface = Interface(main=work_table, table0=practic_table, table1=student_table)
-
-
-	while True:
-		interface.event_handler()
-		clear()
-		print(interface.tables[interface.tables_list[interface.cursor]].print_table())
-		
-		
-
+	interface.run()
